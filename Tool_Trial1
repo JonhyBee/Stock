@@ -2,14 +2,14 @@ import requests
 import openai
 
 # OpenAI API key
-openai.api_key = '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'
+openai.api_key = 'sk-xxx'
 
 # News API request
 url = 'https://newsapi.org/v2/top-headlines'
 parameters = {
     'category': 'business',
     'country': 'us', 
-    'apiKey': 'c9e79ec9fee94c77be500883d64da81e',
+    'apiKey': 'xxx',
 }
 
 response = requests.get(url, params=parameters)
