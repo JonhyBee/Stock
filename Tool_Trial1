@@ -1,0 +1,44 @@
+import requests
+import openai
+
+# OpenAI API key
+openai.api_key = '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'
+
+# News API request
+url = 'https://newsapi.org/v2/top-headlines'
+parameters = {
+    'category': 'business',
+    'country': 'us', 
+    'apiKey': 'c9e79ec9fee94c77be500883d64da81e',
+}
+
+response = requests.get(url, params=parameters)
+articles = response.json()['articles']
+
+prompts = []
+for article in articles:
+    title = article['title']
+    content = article['content']
+    prompt = f"This is a news headline: '{title}'. The content of the article is: '{content}'. " \
+              "Please provide the NYSE ticker symbols of any companies mentioned in the article " \
+              "and predict whether the news is likely to have a positive, negative, or neutral " \
+              "impact on their stock prices."
+    prompts.append(prompt)
+
+# Split prompts into two if the total tokens exceed the limit
+if len(' '.join(prompts)) > 4096:
+    midpoint = len(prompts) // 2
+    prompts1 = ' '.join(prompts[:midpoint])
+    prompts2 = ' '.join(prompts[midpoint:])
+    prompts_list = [prompts1, prompts2]
+else:
+    prompts_list = [' '.join(prompts)]
+
+for prompt in prompts_list:
+    response = openai.Completion.create(
+      engine="text-davinci-003",
+      prompt=prompt,
+      temperature=0.5,
+      max_tokens=100
+    )
+    print(response.choices[0].text.strip())
